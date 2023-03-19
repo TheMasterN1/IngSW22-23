@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<projectDescription>
+	<name>prove_esame_INGSW</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+	</natures>
+	<linkedResources>
+		<link>
+			<name>resource/sds.jpg</name>
+			<type>1</type>
+			<location>C:/Users/Salvatore Gervasio/Pictures/sds.jpg</location>
+		</link>
+		<link>
+			<name>src/resources/email.png</name>
+			<type>1</type>
+			<location>C:/Users/Salvatore Gervasio/Downloads/email.png</location>
+		</link>
+	</linkedResources>
+</projectDescription>
