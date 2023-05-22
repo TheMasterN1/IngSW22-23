@@ -17,6 +17,19 @@
 CREATE DATABASE IF NOT EXISTS `ratatouille` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `ratatouille`;
 
+-- Dump della struttura di tabella ratatouille.bacheca
+CREATE TABLE IF NOT EXISTS `bacheca` (
+  `IDnotifica` int(11) NOT NULL,
+  `oggetto` varchar(70) NOT NULL,
+  `testo` varchar(1000) NOT NULL,
+  `IDutente` int(11) NOT NULL,
+  PRIMARY KEY (`IDnotifica`),
+  KEY `sender` (`IDutente`),
+  CONSTRAINT `sender` FOREIGN KEY (`IDutente`) REFERENCES `utente` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- L’esportazione dei dati non era selezionata.
+
 -- Dump della struttura di tabella ratatouille.ingrediente
 CREATE TABLE IF NOT EXISTS `ingrediente` (
   `nome` varchar(50) NOT NULL,
@@ -83,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `prodotto` (
   `categoria` enum('Primo','Secondo','Contorno','Dolce','Antipasto','Bibita') NOT NULL,
   PRIMARY KEY (`prodottoID`),
   KEY `prodottoID` (`prodottoID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1000121213 DEFAULT CHARSET=latin1;
 
 -- L’esportazione dei dati non era selezionata.
 
@@ -135,6 +148,19 @@ CREATE TABLE IF NOT EXISTS `utente` (
   KEY `password` (`password`),
   KEY `FK1_IDsala` (`IDsala`),
   CONSTRAINT `FK1_IDsala` FOREIGN KEY (`IDsala`) REFERENCES `sala` (`salaID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- L’esportazione dei dati non era selezionata.
+
+-- Dump della struttura di tabella ratatouille.visualizzazione
+CREATE TABLE IF NOT EXISTS `visualizzazione` (
+  `ID` int(11) NOT NULL,
+  `IDnotifica` int(11) NOT NULL,
+  `visualizzato` binary(1) NOT NULL DEFAULT '\0',
+  KEY `FK1IDnotifica` (`IDnotifica`),
+  KEY `FK2ID` (`ID`),
+  CONSTRAINT `FK1IDnotifica` FOREIGN KEY (`IDnotifica`) REFERENCES `bacheca` (`IDnotifica`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK2ID` FOREIGN KEY (`ID`) REFERENCES `utente` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- L’esportazione dei dati non era selezionata.
