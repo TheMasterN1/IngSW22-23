@@ -66,9 +66,12 @@ CREATE TABLE IF NOT EXISTS `ordine` (
   `ordineId` int(11) NOT NULL AUTO_INCREMENT,
   `costoOrdine` int(11) NOT NULL,
   `prodId` int(11) NOT NULL,
+  `tavoloID` int(11) NOT NULL,
   PRIMARY KEY (`ordineId`),
   KEY `FK1_prodID` (`prodId`),
-  CONSTRAINT `FK1_prodID` FOREIGN KEY (`prodId`) REFERENCES `prodotto` (`prodottoID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  KEY `FK2_tavoloID` (`tavoloID`),
+  CONSTRAINT `FK1_prodID` FOREIGN KEY (`prodId`) REFERENCES `prodotto` (`prodottoID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK2_tavoloID` FOREIGN KEY (`tavoloID`) REFERENCES `tavolo` (`tavoloID`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- L’esportazione dei dati non era selezionata.
