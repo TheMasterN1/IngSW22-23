@@ -92,11 +92,11 @@ CREATE TABLE IF NOT EXISTS `portata` (
 CREATE TABLE IF NOT EXISTS `prodotto` (
   `costo` float NOT NULL,
   `nome` varchar(50) NOT NULL DEFAULT '',
-  `allergeni` varchar(50) NOT NULL DEFAULT '',
   `descrizione` varchar(100) NOT NULL DEFAULT '',
   `prodottoID` int(11) NOT NULL AUTO_INCREMENT,
   `quantita` int(11) NOT NULL,
   `categoria` enum('Primo','Secondo','Contorno','Dolce','Antipasto','Bibita') NOT NULL,
+  `allergeni` enum('Glutine','Sesamo','Crostacei','Pesce','Arachidi','Uova','Soia','Latte','Sedano','Senape','Lupini','Molluschi') NOT NULL,
   PRIMARY KEY (`prodottoID`),
   KEY `prodottoID` (`prodottoID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000121213 DEFAULT CHARSET=latin1;
@@ -109,20 +109,17 @@ CREATE TABLE IF NOT EXISTS `ricetta` (
   `ingredienteID` int(11) DEFAULT NULL,
   KEY `FK` (`prodottoID`),
   KEY `FK1` (`ingredienteID`),
-  CONSTRAINT `FK` FOREIGN KEY (`prodottoID`) REFERENCES `prodotto` (`prodottoID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK1` FOREIGN KEY (`ingredienteID`) REFERENCES `ingrediente` (`ingredienteId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  CONSTRAINT `FK` FOREIGN KEY (`prodottoID`) REFERENCES `prodotto` (`prodottoID`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `FK1` FOREIGN KEY (`ingredienteID`) REFERENCES `ingrediente` (`ingredienteId`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella ratatouille.sala
 CREATE TABLE IF NOT EXISTS `sala` (
-  `salaID` int(11) NOT NULL AUTO_INCREMENT,
-  `quantitaTavoli` int(11) NOT NULL,
-  `tavoliID` int(11) NOT NULL,
-  PRIMARY KEY (`salaID`),
-  KEY `FK1_tavoliID` (`tavoliID`),
-  CONSTRAINT `FK1_tavoliID` FOREIGN KEY (`tavoliID`) REFERENCES `tavolo` (`tavoloID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+  `salaID` int(11) NOT NULL,
+  `quantita_tavoli` int(11) NOT NULL,
+  PRIMARY KEY (`salaID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- L’esportazione dei dati non era selezionata.
@@ -167,6 +164,15 @@ CREATE TABLE IF NOT EXISTS `visualizzazione` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- L’esportazione dei dati non era selezionata.
+
+-- Dump della struttura di trigger ratatouille.ricetta_after_delete
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `ricetta_after_delete` AFTER DELETE ON `ricetta` FOR EACH ROW BEGIN
+ DELETE FROM prodotto WHERE OLD.prodottoID = prodotto.prodottoID;
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
