@@ -1,32 +1,34 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Versione server:              10.6.5-MariaDB - mariadb.org binary distribution
+-- Versione server:              11.1.0-MariaDB - mariadb.org binary distribution
 -- S.O. server:                  Win64
--- HeidiSQL Versione:            11.3.0.6295
+-- HeidiSQL Versione:            12.3.0.6589
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
 /*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 
 -- Dump della struttura del database ratatouille
-CREATE DATABASE IF NOT EXISTS `ratatouille` /*!40100 DEFAULT CHARACTER SET latin1 */;
+CREATE DATABASE IF NOT EXISTS `ratatouille` /*!40100 DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci */;
 USE `ratatouille`;
 
 -- Dump della struttura di tabella ratatouille.bacheca
 CREATE TABLE IF NOT EXISTS `bacheca` (
-  `IDnotifica` int(11) NOT NULL,
+  `IDnotifica` int(11) NOT NULL AUTO_INCREMENT,
   `oggetto` varchar(70) NOT NULL,
   `testo` varchar(1000) NOT NULL,
-  `IDutente` int(11) NOT NULL,
+  `IDutente` int(11) DEFAULT NULL,
   PRIMARY KEY (`IDnotifica`),
   KEY `sender` (`IDutente`),
   CONSTRAINT `sender` FOREIGN KEY (`IDutente`) REFERENCES `utente` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- L’esportazione dei dati non era selezionata.
 
@@ -36,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `ingrediente` (
   `ingredienteId` int(11) NOT NULL AUTO_INCREMENT,
   `quantita` int(11) NOT NULL,
   PRIMARY KEY (`ingredienteId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- L’esportazione dei dati non era selezionata.
 
@@ -45,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `menu` (
   `menuID` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`menuID`),
   KEY `menuID` (`menuID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- L’esportazione dei dati non era selezionata.
 
@@ -53,24 +55,36 @@ CREATE TABLE IF NOT EXISTS `menu` (
 CREATE TABLE IF NOT EXISTS `ordinazione` (
   `ordineID` int(11) DEFAULT NULL,
   `prodottoID` int(11) DEFAULT NULL,
-  `quantita` int(11) DEFAULT NULL,
+  `quantità` int(11) DEFAULT NULL,
   KEY `ordineID` (`ordineID`),
   KEY `FK__prodotto` (`prodottoID`),
   CONSTRAINT `FK__ordine` FOREIGN KEY (`ordineID`) REFERENCES `ordine` (`ordineId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK__prodotto` FOREIGN KEY (`prodottoID`) REFERENCES `prodotto` (`prodottoID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  CONSTRAINT `FK__prodotto` FOREIGN KEY (`prodottoID`) REFERENCES `prodotto` (`prodottoID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella ratatouille.ordine
 CREATE TABLE IF NOT EXISTS `ordine` (
   `ordineId` int(11) NOT NULL AUTO_INCREMENT,
-  `costoOrdine` int(11) NOT NULL,
+  `costoOrdine` float NOT NULL DEFAULT 0,
   `tavoloID` int(11) NOT NULL,
   PRIMARY KEY (`ordineId`),
   KEY `FK2_tavoloID` (`tavoloID`),
-  CONSTRAINT `FK2_tavoloID` FOREIGN KEY (`tavoloID`) REFERENCES `tavolo` (`tavoloID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  CONSTRAINT `FK2_tavoloID` FOREIGN KEY (`tavoloID`) REFERENCES `tavolo` (`tavoloID`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- L’esportazione dei dati non era selezionata.
+
+-- Dump della struttura di tabella ratatouille.portata
+CREATE TABLE IF NOT EXISTS `portata` (
+  `menuID` int(11) DEFAULT NULL,
+  `prodottoID` int(11) DEFAULT NULL,
+  KEY `FK_1` (`menuID`),
+  KEY `FK_2` (`prodottoID`),
+  CONSTRAINT `FK_1` FOREIGN KEY (`menuID`) REFERENCES `menu` (`menuID`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `FK_2` FOREIGN KEY (`prodottoID`) REFERENCES `prodotto` (`prodottoID`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- L’esportazione dei dati non era selezionata.
 
@@ -80,12 +94,11 @@ CREATE TABLE IF NOT EXISTS `prodotto` (
   `nome` varchar(50) NOT NULL DEFAULT '',
   `descrizione` varchar(100) NOT NULL DEFAULT '',
   `prodottoID` int(11) NOT NULL AUTO_INCREMENT,
-  `quantita` int(11) NOT NULL,
   `categoria` enum('Primo','Secondo','Contorno','Dolce','Antipasto','Bibita') NOT NULL,
-  `allergeni` enum('Glutine','Sesamo','Crostacei','Pesce','Arachidi','Uova','Soia','Latte','Sedano','Senape','Lupini','Molluschi') NOT NULL,
+  `allergeni` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`prodottoID`),
   KEY `prodottoID` (`prodottoID`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000121213 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=1000121217 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- L’esportazione dei dati non era selezionata.
 
@@ -93,20 +106,20 @@ CREATE TABLE IF NOT EXISTS `prodotto` (
 CREATE TABLE IF NOT EXISTS `ricetta` (
   `prodottoID` int(11) DEFAULT NULL,
   `ingredienteID` int(11) DEFAULT NULL,
+  `quantità` int(11) DEFAULT NULL,
   KEY `FK` (`prodottoID`),
   KEY `FK1` (`ingredienteID`),
   CONSTRAINT `FK` FOREIGN KEY (`prodottoID`) REFERENCES `prodotto` (`prodottoID`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `FK1` FOREIGN KEY (`ingredienteID`) REFERENCES `ingrediente` (`ingredienteId`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- L’esportazione dei dati non era selezionata.
 
 -- Dump della struttura di tabella ratatouille.sala
 CREATE TABLE IF NOT EXISTS `sala` (
   `salaID` int(11) NOT NULL,
-  `quantita_tavoli` int(11) NOT NULL,
   PRIMARY KEY (`salaID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- L’esportazione dei dati non era selezionata.
 
@@ -118,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `tavolo` (
   PRIMARY KEY (`tavoloID`),
   KEY `FK1_salaID` (`salaID`),
   CONSTRAINT `FK1_salaID` FOREIGN KEY (`salaID`) REFERENCES `sala` (`salaID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- L’esportazione dei dati non era selezionata.
 
@@ -127,14 +140,13 @@ CREATE TABLE IF NOT EXISTS `utente` (
   `username` varchar(50) NOT NULL,
   `password` varchar(50) NOT NULL,
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ruolo` enum('Amministratore','Supervisore','Addetto Sala','Addetto Cucina') NOT NULL,
+  `ruolo` enum('Amministratore','Supervisore','Addetto_Sala','Addetto_Cucina') NOT NULL,
   `IDsala` int(11) DEFAULT NULL,
+  `nuovoUtente` enum('Y','N') DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `id` (`id`),
-  KEY `password` (`password`),
   KEY `FK1_IDsala` (`IDsala`),
   CONSTRAINT `FK1_IDsala` FOREIGN KEY (`IDsala`) REFERENCES `sala` (`salaID`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- L’esportazione dei dati non era selezionata.
 
@@ -142,12 +154,12 @@ CREATE TABLE IF NOT EXISTS `utente` (
 CREATE TABLE IF NOT EXISTS `visualizzazione` (
   `ID` int(11) NOT NULL,
   `IDnotifica` int(11) NOT NULL,
-  `visualizzato` binary(1) NOT NULL DEFAULT '\0',
+  `visualizzato` enum('Y','N') NOT NULL DEFAULT 'N',
   KEY `FK1IDnotifica` (`IDnotifica`),
   KEY `FK2ID` (`ID`),
-  CONSTRAINT `FK1IDnotifica` FOREIGN KEY (`IDnotifica`) REFERENCES `bacheca` (`IDnotifica`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `FK2ID` FOREIGN KEY (`ID`) REFERENCES `utente` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  CONSTRAINT `FK1ID` FOREIGN KEY (`ID`) REFERENCES `utente` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `FK2Notifica` FOREIGN KEY (`IDnotifica`) REFERENCES `bacheca` (`IDnotifica`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- L’esportazione dei dati non era selezionata.
 
@@ -155,25 +167,42 @@ CREATE TABLE IF NOT EXISTS `visualizzazione` (
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
 CREATE TRIGGER `bacheca_insert` AFTER INSERT ON `bacheca` FOR EACH ROW BEGIN
-   DECLARE X INTEGER; 
-
-	FOR X IN(SELECT id FROM utente WHERE id <> NEW.IDutente)	DO
-		INSERT INTO visualizzazione(id, visualizzato) VALUES(NEW.IDutente, FALSE);
-	END FOR;
+   DECLARE X INTEGER;
+   DECLARE done INT DEFAULT FALSE;
+   
+   DECLARE cur CURSOR FOR SELECT id FROM utente WHERE id <> NEW.IDutente OR id IS NOT NULL; 
+   
+   DECLARE CONTINUE handler FOR NOT FOUND SET done = TRUE;
+   
+   OPEN cur;
+   
+   readloop: LOOP
+   	
+   	FETCH cur INTO X;
+   
+  		if done then
+   		leave readloop;
+   	END if;
+   
+		INSERT INTO visualizzazione VALUES(X, NEW.IDnotifica, 'N');
+	END LOOP;
 	
+	close cur;
+	
+	if NEW.IDutente <> NULL THEN
+		INSERT INTO visualizzazione VALUES(NEW.IDutente, NEW.IDnotifica, 'Y');
+	END IF;
 END//
 DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
--- Dump della struttura di trigger ratatouille.ordinazione_after_delete
+-- Dump della struttura di trigger ratatouille.ingrediente_after_update
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
-CREATE TRIGGER `ordinazione_after_delete` AFTER DELETE ON `ordinazione` FOR EACH ROW BEGIN
-	DECLARE X FLOAT DEFAULT (SELECT costo FROM prodotto WHERE prodottoID = OLD.prodottoID);
-	UPDATE ordine 
-	SET costoOrdine = costoOrdine - X
-	WHERE ordineID = OLD.ordineID;
-	
+CREATE TRIGGER `ingrediente_after_update` AFTER UPDATE ON `ingrediente` FOR EACH ROW BEGIN
+	if NEW.quantita <= 5 THEN
+		INSERT INTO bacheca(oggetto, testo) VALUES('Avviso Limite Superato', CONCAT('L\'ingrediente ', NEW.nome, ' ha raggiunto il limite minimo, si prega di fare rifornimento al più presto'));
+	END if;
 END//
 DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
@@ -183,28 +212,52 @@ SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,ERROR_FOR_DIVISIO
 DELIMITER //
 CREATE TRIGGER `ordinazione_after_insert` AFTER INSERT ON `ordinazione` FOR EACH ROW BEGIN
 	DECLARE X FLOAT DEFAULT (SELECT costo FROM prodotto WHERE prodottoID = NEW.prodottoID);
+	DECLARE Y INTEGER DEFAULT (SELECT quantità FROM ordinazione WHERE prodottoID = NEW.prodottoID);
+	
 	UPDATE ordine 
-	SET costoOrdine = costoOrdine + X
+	SET costoOrdine = costoOrdine + X*Y
 	WHERE ordineID = NEW.ordineID;
 	
 END//
 DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
--- Dump della struttura di trigger ratatouille.ricetta_after_delete
+-- Dump della struttura di trigger ratatouille.ordinazione_before_delete
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
-CREATE TRIGGER `ricetta_after_delete` AFTER DELETE ON `ricetta` FOR EACH ROW BEGIN
- DELETE FROM prodotto WHERE OLD.prodottoID = prodotto.prodottoID;
-END//
-DELIMITER ;
-SET SQL_MODE=@OLDTMP_SQL_MODE;
+CREATE TRIGGER `ordinazione_before_delete` BEFORE DELETE ON `ordinazione` FOR EACH ROW BEGIN
+	DECLARE X FLOAT DEFAULT (SELECT costo FROM prodotto WHERE prodottoID = OLD.prodottoID);
+	DECLARE Y INTEGER DEFAULT (SELECT quantità FROM ordinazione WHERE prodottoID = OLD.prodottoID);
+	DECLARE J, K INTEGER;
+	DECLARE done INT DEFAULT FALSE;
+	DECLARE cur CURSOR FOR SELECT quantità FROM ricetta WHERE prodottoID = OLD.prodottoID; 
+	DECLARE cur2 CURSOR FOR SELECT ingredienteID FROM ricetta WHERE prodottoID = OLD.prodottoID; 
+   DECLARE CONTINUE handler FOR NOT FOUND SET done = TRUE;
 
--- Dump della struttura di trigger ratatouille.tavolo_after_delete
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-DELIMITER //
-CREATE TRIGGER `tavolo_after_delete` AFTER DELETE ON `tavolo` FOR EACH ROW BEGIN
-	DELETE FROM ordine WHERE tavoloID = OLD.tavoloID;
+	UPDATE ordine 
+	SET costoOrdine = costoOrdine - X*Y
+	WHERE ordineID = OLD.ordineID;
+   
+   OPEN cur;
+   OPEN cur2;
+   
+   readloop: LOOP
+   	
+   	FETCH cur INTO J;
+		FETCH cur2 INTO K;
+   
+  		if done then
+   		leave readloop;
+   	END if;
+				
+		UPDATE ingrediente
+		SET quantità = quantità - J*Y
+		WHERE K = ingredienteID; 
+
+	END LOOP;
+	
+	close cur;
+	close cur2;
 END//
 DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
@@ -218,6 +271,7 @@ END//
 DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
