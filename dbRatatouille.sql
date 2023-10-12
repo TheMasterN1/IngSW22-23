@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `prodotto` (
   `allergeni` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`prodottoID`),
   KEY `prodottoID` (`prodottoID`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000121217 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1000121222 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- L’esportazione dei dati non era selezionata.
 
