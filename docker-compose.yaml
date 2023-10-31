@@ -1,0 +1,26 @@
+version: '3.9'
+
+services:
+  node-backend:
+    container_name: node-server
+    restart: on-failure
+    build: BackEndINGSW/.
+    ports:
+      - "8080:8080"
+    depends_on:
+      - maria-db
+  maria-db:
+    container_name: maria-db
+    image: mariadb
+    ports:
+      - "3306:3306"
+    environment:
+      -  MARIADB_ROOT_PASSWORD=123
+      -  MARIADB_DB=ratatouille
+    volumes:
+      - ./dbRatatouille.sql:/docker-entrypoint-initdb.d/docker_mariadb_init.sql
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+    - 9090:9090
