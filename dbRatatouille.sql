@@ -79,6 +79,17 @@ CREATE TABLE IF NOT EXISTS `ordine` (
   CONSTRAINT `FK2_tavoloID` FOREIGN KEY (`tavoloID`) REFERENCES `tavolo` (`tavoloID`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+-- Dump dei dati della tabella ratatouille.ordine: ~9 rows (circa)
+INSERT IGNORE INTO `ordine` (`ordineId`, `costoOrdine`, `tavoloID`) VALUES
+	(2, 0, 20),
+	(3, 0, 21),
+	(4, 0, 22),
+	(5, 0, 23),
+	(6, 0, 24),
+	(7, 0, 25),
+	(8, 0, 26),
+	(9, 0, 27);
+
 -- Dump della struttura di tabella ratatouille.portata
 CREATE TABLE IF NOT EXISTS `portata` (
   `menuID` int(11) DEFAULT NULL,
