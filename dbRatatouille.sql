@@ -28,12 +28,14 @@ CREATE TABLE IF NOT EXISTS `bacheca` (
   PRIMARY KEY (`IDnotifica`),
   KEY `sender` (`IDutente`),
   CONSTRAINT `sender` FOREIGN KEY (`IDutente`) REFERENCES `utente` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dump dei dati della tabella ratatouille.bacheca: ~3 rows (circa)
+-- Dump dei dati della tabella ratatouille.bacheca: ~4 rows (circa)
 INSERT IGNORE INTO `bacheca` (`IDnotifica`, `oggetto`, `testo`, `IDutente`) VALUES
 	(23, 'Saluto', 'ciao pisello come va ti voglio bene', 2),
-	(28, 'Avviso Limite Superato', 'L\'ingrediente Pancia ha raggiunto il limite minimo, si prega di fare rifornimento al più presto', NULL);
+	(28, 'Avviso Limite Superato', 'L\'ingrediente Pancia ha raggiunto il limite minimo, si prega di fare rifornimento al più presto', NULL),
+	(29, 'ciao', 'ciao', 2),
+	(30, 'ciao', 'ciao', 2);
 
 -- Dump della struttura di tabella ratatouille.ingrediente
 CREATE TABLE IF NOT EXISTS `ingrediente` (
@@ -201,7 +203,13 @@ INSERT IGNORE INTO `visualizzazione` (`ID`, `IDnotifica`, `visualizzato`) VALUES
 	(2, 23, 'Y'),
 	(2, 28, 'Y'),
 	(3, 28, 'N'),
-	(4, 28, 'N');
+	(4, 28, 'N'),
+	(2, 29, 'N'),
+	(3, 29, 'N'),
+	(4, 29, 'N'),
+	(2, 30, 'N'),
+	(3, 30, 'N'),
+	(4, 30, 'N');
 
 -- Dump della struttura di trigger ratatouille.bacheca_insert
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
@@ -262,12 +270,20 @@ END//
 DELIMITER ;
 SET SQL_MODE=@OLDTMP_SQL_MODE;
 
+-- Dump della struttura di trigger ratatouille.ricetta_before_delete
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `ricetta_before_delete` BEFORE DELETE ON `ricetta` FOR EACH ROW BEGIN
+	DELETE FROM prodotto WHERE prodottoID=OLD.prodottoID;
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
+
 -- Dump della struttura di trigger ratatouille.ordinazione_before_delete
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
 DELIMITER //
 CREATE TRIGGER `ordinazione_before_delete` BEFORE DELETE ON `ordinazione` FOR EACH ROW BEGIN
 	DECLARE X FLOAT DEFAULT (SELECT costo FROM prodotto WHERE prodottoID = OLD.prodottoID);
-	DECLARE Y INTEGER DEFAULT (SELECT quantità FROM ordinazione WHERE prodottoID = OLD.prodottoID);
 	DECLARE J, K INTEGER;
 	DECLARE done INT DEFAULT FALSE;
 	DECLARE cur CURSOR FOR SELECT quantità FROM ricetta WHERE prodottoID = OLD.prodottoID; 
@@ -275,7 +291,7 @@ CREATE TRIGGER `ordinazione_before_delete` BEFORE DELETE ON `ordinazione` FOR EA
    DECLARE CONTINUE handler FOR NOT FOUND SET done = TRUE;
 
 	UPDATE ordine 
-	SET costoOrdine = costoOrdine - X*Y
+	SET costoOrdine = costoOrdine - X*OLD.quantità
 	WHERE ordineID = OLD.ordineID;
    
    OPEN cur;
@@ -291,7 +307,7 @@ CREATE TRIGGER `ordinazione_before_delete` BEFORE DELETE ON `ordinazione` FOR EA
    	END if;
 				
 		UPDATE ingrediente
-		SET quantità = quantità - J*Y
+		SET quantita = quantita - J*OLD.quantità
 		WHERE K = ingredienteID; 
 
 	END LOOP;
